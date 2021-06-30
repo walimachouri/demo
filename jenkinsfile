@@ -33,6 +33,13 @@ pipeline {
         //         s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'jenkins-bucket-walim/${JOB_NAME}-${BUILD_NUMBER}', excludedFile: '**/node_modules/**', flatten: false, gzipFiles: false , keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'us-east-1', showDirectlyInBrowser: false, sourceFile: '**/build/**', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3-profile', userMetadata: []
         //     }
         // }
+    stage('Run Docker container on linux VM') {
+             
+            steps {
+                sh "docker -H ssh://34.225.251.57 run -d -p 80:80 walimachouri/samplewebapp"
+ 
+            }
+        }
 
     }
 }
