@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('clone project') {
+            steps {
+                echo 'cloning...'
+                git branch: 'main', url: 'https://github.com/walimachouri/demo.git'
+            }
+        }
+    stage('Docker Build and Tag') {
+        steps {
+            sh 'docker build -t samplenginx:latest .' 
+            sh 'docker tag samplenginx walimachouri/samplewebapp:latest'
+            }
+            }
+        // stage("Build") {
+        //   steps {
+        //     nodejs('NodeJs-16.2.0'){
+        //       sh 'yarn install'
+        //       sh 'yarn build'  
+        //       }
+        //     }
+        // }
+        // stage('Deploy') {
+        //     steps {
+        //         echo 'pushing build artifacts to s3 bucket'
+        //         s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'jenkins-bucket-walim/${JOB_NAME}-${BUILD_NUMBER}', excludedFile: '**/node_modules/**', flatten: false, gzipFiles: false , keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'us-east-1', showDirectlyInBrowser: false, sourceFile: '**/build/**', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3-profile', userMetadata: []
+        //     }
+        // }
+
+    }
+}
