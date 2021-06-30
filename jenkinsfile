@@ -36,7 +36,7 @@ pipeline {
     stage('Run Docker container on linux VM') {
              
             steps {
-                sh "docker -H ssh://34.225.251.57 run -d -p 80:80 walimachouri/samplewebapp"
+                sh "docker -H ssh://34.236.48.131 run -d -p 80:80 walimachouri/samplewebapp"
  
             }
         }
