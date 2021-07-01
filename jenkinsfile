@@ -13,33 +13,25 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/walimachouri/demo.git'
             }
         }
-    stage('Docker Build and Tag') {
-        steps {
-            sh 'docker build -t samplenginx:latest .' 
-            sh 'docker tag samplenginx walimachouri/samplewebapp:latest'
-            }
-            }
-        // stage("Build") {
-        //   steps {
-        //     nodejs('NodeJs-16.2.0'){
-        //       sh 'yarn install'
-        //       sh 'yarn build'  
-        //       }
-        //     }
-        // }
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'pushing build artifacts to s3 bucket'
-        //         s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'jenkins-bucket-walim/${JOB_NAME}-${BUILD_NUMBER}', excludedFile: '**/node_modules/**', flatten: false, gzipFiles: false , keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'us-east-1', showDirectlyInBrowser: false, sourceFile: '**/build/**', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 's3-profile', userMetadata: []
-        //     }
-        // }
-    stage('Run Docker container on linux VM') {
-             
+        stage('Docker Build and Tag') {
             steps {
-                sh "docker -H ssh://34.236.48.131 run -d -p 80:80 walimachouri/samplewebapp"
- 
-            }
+                sh 'docker build -t samplenginx:latest .' 
+                sh 'docker tag samplenginx 93339450/test-repo:latest'
+                }
         }
-
+        stage('Push image to docker hub repo') {
+                
+                steps {
+                    withDockerRegistry(credentialsId: 'docker-hub') {
+                        sh 'docker push 93339450/test-repo:latest'
+                    }
+    
+                }
+            }
+        stage('Run Docker container on linux VM') {
+            steps {
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'demo-cluster', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: 'docker run -it --rm -d -p 80:80  93339450/test-repo:latest', execTimeout: 0, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '', remoteDirectorySDF: false, removePrefix: '', sourceFiles: '')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+                }
+        }
     }
 }
